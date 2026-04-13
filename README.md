@@ -379,102 +379,15 @@ When run on Linux with proper privileges, the traceroute tool is expected to:
 
 Actual results depend on the target destination, local routing policy, firewall behavior, and network permissions.
 
-## Sample Terminal Output
-
-### Q1 Sample Output
-
-```text
-seq=1 bytes=128 rtt=0.270 ms
-seq=2 bytes=128 rtt=0.167 ms
-seq=3 bytes=128 rtt=0.145 ms
-seq=4 bytes=128 rtt=0.057 ms
-seq=5 bytes=128 rtt=0.212 ms
-
---- RTT Summary ---
-Packets: sent=5 received=5 lost=0 loss=0.00%
-RTT (ms): min=0.057 avg=0.170 max=0.270
-```
-
-### Q2 Sample Output
-
-```text
-second  throughput(bps)  avg_delay(ms)  replies
-1       200704.00        14.624         98
-2       204800.00        12.180         100
-3       208896.00        12.777         102
-
---- Throughput Summary ---
-Packets: sent=300 received=300 lost=0 loss=0.00%
-```
-
-### Q3 Sample Output Format
-
-```text
-traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 3 probes per hop
- 1  192.168.1.1  1.203 ms  192.168.1.1  1.021 ms  192.168.1.1  1.144 ms
- 2  10.0.0.1     8.442 ms  10.0.0.1     8.335 ms  10.0.0.1     8.518 ms
- 3  * * *
- ...
-```
-
-## Terminal Output Images
-
-Add terminal screenshots for the final report in this section. Suggested captures:
+## Terminal Output
 
 - Q1 server startup and RTT client output
 - Q2 throughput client output and generated graph
 - Q3 traceroute execution on Linux with `sudo`
 
-Suggested file names if screenshots are added later:
-
-- `q1-rtt-terminal.png`
-- `q2-throughput-terminal.png`
-- `q2-graph-output.png`
-- `q3-traceroute-terminal.png`
-
-If these images are added to the repository later, they can be embedded here using Markdown image tags.
-
-## Testing Notes
-
-Testing was approached in a tool-specific way.
-
-### Q1 Testing
-
-- Verified that the server receives and echoes packets correctly
-- Verified that the client computes RTT for each reply
-- Verified that final statistics are printed correctly
-- Verified localhost testing using `127.0.0.1`
-
-### Q2 Testing
-
-- Verified that the client can send packets at a configured rate
-- Verified that echoed responses are grouped in 1-second intervals
-- Verified throughput and average delay calculations
-- Verified that CSV output is generated
-- Verified sample local execution without packet loss
-
-### Q3 Testing
-
-- Verified code structure and build logic for Linux/POSIX usage
-- Verified timeout handling and output formatting logic
-- Verified that the program explicitly communicates the need for Linux and elevated privileges
-
-Because the current working environment is Windows, full runtime validation of the raw-socket traceroute path should be performed on Linux.
-
 ## Challenges And Solutions
 
-### Challenge 1: Cross-Platform Socket Differences
-
-Problem:
-
-- Windows and Linux use different socket APIs and initialization requirements
-
-Solution:
-
-- Q1 and Q2 were written with Windows-compatible socket setup
-- Q3 was kept Linux-specific because raw ICMP sockets and `netinet/ip_icmp.h` align naturally with Linux
-
-### Challenge 2: Measuring RTT Reliably
+### Challenge 1: Measuring RTT Reliably
 
 Problem:
 
@@ -484,7 +397,7 @@ Solution:
 
 - A custom packet header with sequence number and timestamp was inserted into the payload
 
-### Challenge 3: Handling High Packet Rates In Throughput Mode
+### Challenge 2: Handling High Packet Rates In Throughput Mode
 
 Problem:
 
@@ -494,7 +407,7 @@ Solution:
 
 - The throughput client was designed to send rapidly and drain replies efficiently using non-blocking receive behavior
 
-### Challenge 4: Implementing Traceroute Without Using Existing Utilities
+### Challenge 3: Implementing Traceroute Without Using Existing Utilities
 
 Problem:
 
@@ -504,7 +417,7 @@ Solution:
 
 - TTL-controlled UDP probes and a raw ICMP receive socket were used to recreate the essential logic
 
-### Challenge 5: Timeout Representation
+### Challenge 4: Timeout Representation
 
 Problem:
 
@@ -513,14 +426,6 @@ Problem:
 Solution:
 
 - Socket timeout and `select()`-based waiting were used so missing packets are displayed as `*`
-
-## Notes And Limitations
-
-- Q1 and Q2 are best demonstrated on localhost first and can then be tested across machines in the same network
-- Q2 throughput reflects application-observed echoed data, not theoretical link capacity
-- Q3 requires Linux and root/sudo privileges
-- Firewalls, NAT devices, and router filtering can affect traceroute output
-- Some networks suppress ICMP responses, which may increase the number of `*` entries
 
 ## References
 
