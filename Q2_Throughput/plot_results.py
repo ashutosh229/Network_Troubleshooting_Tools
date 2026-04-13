@@ -1,6 +1,6 @@
 import csv
 import sys
-
+import os
 import matplotlib.pyplot as plt
 
 
@@ -24,7 +24,9 @@ def main():
         print("Usage: python plot_results.py <throughput_results.csv>")
         sys.exit(1)
 
-    rows = load_rows(sys.argv[1])
+    csv_path = sys.argv[1]
+    rows = load_rows(csv_path)
+
     if not rows:
         print("No rows found in CSV")
         sys.exit(1)
@@ -47,6 +49,13 @@ def main():
     axes[1].grid(True, linestyle="--", alpha=0.4)
 
     fig.tight_layout()
+
+    output_dir = os.path.dirname(os.path.abspath(csv_path))
+    output_path = os.path.join(output_dir, "plot_results.png")
+
+    fig.savefig(output_path, dpi=300)
+    print(f"Plot saved to: {output_path}")
+
     plt.show()
 
 
