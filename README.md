@@ -193,7 +193,6 @@ The following points were important while implementing the tools:
 - Throughput is measured from successfully echoed reply bytes observed at the client
 - Raw ICMP sockets require administrative privileges
 - Traceroute timeouts must be handled carefully so missing ICMP responses are displayed as `*`
-- Cross-platform behavior differs for networking APIs, so Q3 is documented as Linux-oriented
 
 ## Folder Structure
 
